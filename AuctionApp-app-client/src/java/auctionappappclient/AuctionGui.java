@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package auctionappappclient;
 
 import auctionsystem.ejb.AuctionManagerBeanRemote;
 import auctionsystem.entity.Item;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableModel;
  * @author Cursos Montoya
  */
 public class AuctionGui extends javax.swing.JFrame {
-    
+
     @EJB
     private static AuctionManagerBeanRemote auctionManagerBean;
 
@@ -60,6 +60,12 @@ public class AuctionGui extends javax.swing.JFrame {
         auctions_closeTime = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
 
         jLabel1.setText("Description:");
 
@@ -252,7 +258,7 @@ public class AuctionGui extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void items_descriptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_items_descriptionActionPerformed
-        
+
     }//GEN-LAST:event_items_descriptionActionPerformed
 
     private void items_buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_items_buttonAddActionPerformed
@@ -262,27 +268,43 @@ public class AuctionGui extends javax.swing.JFrame {
 
     public void refreshItems() {
         List<Item> items = auctionManagerBean.getItems();
-        
-        DefaultTableModel model = (DefaultTableModel)items_table.getModel();
-        
+
+        DefaultTableModel model = (DefaultTableModel) items_table.getModel();
+
         int row = model.getRowCount();
-        for (int i = 0; i < row; i++)
+        for (int i = 0; i < row; i++) {
             model.removeRow(0);
-            
+        }
+
         for (Item item : items) {
             model.addRow(
-                new Object[] {
-                    item.getId(),
-                    item.getDescription(),
-                    item.getImage()
-                }
+                    new Object[]{
+                        item.getId(),
+                        item.getDescription(),
+                        item.getImage()
+                    }
             );
         }
-    } 
-    
+    }
+
     private void auctions_startAmountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_auctions_startAmountActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_auctions_startAmountActionPerformed
+
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        switch (jTabbedPane1.getSelectedIndex()) {
+            case 0:
+                break;
+            case 1:
+                DefaultComboBoxModel model = (DefaultComboBoxModel) auctions_item.getModel();
+                List<Item> items = auctionManagerBean.getItems();
+                model.removeAllElements();
+                for (Item item : items) {
+                  model.addElement(item);
+                }
+                break;
+        }
+    }//GEN-LAST:event_jTabbedPane1StateChanged
 
     /**
      * @param args the command line arguments

@@ -50,4 +50,11 @@ public class Item implements Serializable {
         this.description = description;
     }
 
+    @Override
+    public String toString() {
+        return description;
+    }
+    
+    
+
 }
