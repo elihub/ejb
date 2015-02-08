@@ -6,10 +6,17 @@
 package auctionappappclient;
 
 import auctionsystem.ejb.AuctionManagerBeanRemote;
+import auctionsystem.ejb.StartAuctionBeanRemote;
+import auctionsystem.entity.Auction;
 import auctionsystem.entity.Item;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -17,6 +24,9 @@ import javax.swing.table.DefaultTableModel;
  * @author Cursos Montoya
  */
 public class AuctionGui extends javax.swing.JFrame {
+
+    @EJB
+    private static StartAuctionBeanRemote startAuctionBean;
 
     @EJB
     private static AuctionManagerBeanRemote auctionManagerBean;
@@ -47,6 +57,7 @@ public class AuctionGui extends javax.swing.JFrame {
         items_table = new javax.swing.JTable();
         items_buttonAdd = new javax.swing.JButton();
         items_buttonRefresh = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -58,6 +69,7 @@ public class AuctionGui extends javax.swing.JFrame {
         auctions_table = new javax.swing.JTable();
         auctions_buttonRefresh = new javax.swing.JButton();
         auctions_closeTime = new com.toedter.calendar.JDateChooser();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,6 +116,13 @@ public class AuctionGui extends javax.swing.JFrame {
 
         items_buttonRefresh.setText("Refresh");
 
+        jButton1.setText("Clear");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -113,7 +132,10 @@ public class AuctionGui extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(items_buttonAdd)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(items_buttonAdd))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jLabel1)
@@ -142,7 +164,9 @@ public class AuctionGui extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(items_image, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(items_buttonAdd)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(items_buttonAdd)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -165,6 +189,11 @@ public class AuctionGui extends javax.swing.JFrame {
         });
 
         auctions_buttonAdd.setText("Add");
+        auctions_buttonAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                auctions_buttonAddActionPerformed(evt);
+            }
+        });
 
         auctions_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -186,6 +215,13 @@ public class AuctionGui extends javax.swing.JFrame {
 
         auctions_buttonRefresh.setText("Refresh");
 
+        jButton2.setText("Checkout");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -193,15 +229,12 @@ public class AuctionGui extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(auctions_buttonAdd)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 10, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(auctions_buttonRefresh, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -210,12 +243,15 @@ public class AuctionGui extends javax.swing.JFrame {
                                 .addComponent(jLabel5)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(auctions_item, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(auctions_startAmount))
-                            .addComponent(auctions_closeTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 222, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(auctions_item, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(auctions_closeTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(auctions_startAmount, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jButton2)
+                                    .addGap(3, 3, 3)
+                                    .addComponent(auctions_buttonAdd))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,7 +269,9 @@ public class AuctionGui extends javax.swing.JFrame {
                     .addComponent(jLabel5)
                     .addComponent(auctions_closeTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(auctions_buttonAdd)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(auctions_buttonAdd)
+                    .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -300,11 +338,74 @@ public class AuctionGui extends javax.swing.JFrame {
                 List<Item> items = auctionManagerBean.getItems();
                 model.removeAllElements();
                 for (Item item : items) {
-                  model.addElement(item);
+                    model.addElement(item);
                 }
                 break;
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void auctions_buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_auctions_buttonAddActionPerformed
+        startAuctionBean.addAuction(Double.parseDouble(auctions_startAmount.getText()), auctions_closeTime.getDate(), (Item) auctions_item.getSelectedItem(), null);
+        refreshAuctions();
+    }//GEN-LAST:event_auctions_buttonAddActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+         auctionManagerBean.remove();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        new Thread(new Runnable() {
+            Future<String> future=auctionManagerBean.checkout();
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(rootPane, "Tu compra esta en proceso, te avisaremos cuando termine");
+               
+                while (!future.isDone()) {
+                   
+                    try {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(AuctionGui.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        JOptionPane.showMessageDialog(rootPane, "Gracias por tu espera, tus productos llegaran pronto, "
+                                + "guarda este id para aclaraciones: "+ future.get());
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(AuctionGui.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ExecutionException ex) {
+                        Logger.getLogger(AuctionGui.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                   
+                }
+                
+            }
+        }).start();
+       
+    }//GEN-LAST:event_jButton2ActionPerformed
+    private void refreshAuctions() {
+        List<Auction> auctions=startAuctionBean.getAuctions();
+        DefaultTableModel model = (DefaultTableModel) auctions_table.getModel();
+
+        int row = model.getRowCount();
+        for (int i = 0; i < row; i++) {
+            model.removeRow(0);
+        }
+
+        for (Auction auction : auctions) {
+            model.addRow(
+                    new Object[]{
+                        auction.getId(),
+                        auction.getItem().getDescription(),
+                        auction.getStatus(),
+                        auction.getOpenTime(),
+                        auction.getCloseTime(),
+                        auction.getSeller()
+                    }
+            );
+        }
+        
+    }
+    
 
     /**
      * @param args the command line arguments
@@ -353,6 +454,8 @@ public class AuctionGui extends javax.swing.JFrame {
     private javax.swing.JTextField items_description;
     private javax.swing.JTextField items_image;
     private javax.swing.JTable items_table;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

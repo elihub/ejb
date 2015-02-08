@@ -87,4 +87,11 @@ public class Auction implements Serializable {
     public int getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "Auction{" + "id=" + id + ", startAmount=" + startAmount + ", status=" + status + ", openTime=" + openTime + ", closeTime=" + closeTime + ", item=" + item + ", seller=" + seller + '}';
+    }
+    
+    
 }
