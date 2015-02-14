@@ -68,8 +68,8 @@ public class AuctionGui extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         auctions_table = new javax.swing.JTable();
         auctions_buttonRefresh = new javax.swing.JButton();
-        auctions_closeTime = new com.toedter.calendar.JDateChooser();
         jButton2 = new javax.swing.JButton();
+        auctions_closeTime = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -245,12 +245,12 @@ public class AuctionGui extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(auctions_item, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(auctions_closeTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(auctions_startAmount, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(jPanel2Layout.createSequentialGroup()
                                     .addComponent(jButton2)
                                     .addGap(3, 3, 3)
-                                    .addComponent(auctions_buttonAdd))))
+                                    .addComponent(auctions_buttonAdd)))
+                            .addComponent(auctions_closeTime, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(

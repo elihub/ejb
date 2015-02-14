@@ -233,7 +233,6 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="auctions_item" alignment="0" min="-2" pref="291" max="-2" attributes="0"/>
                                   <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="auctions_closeTime" alignment="0" max="32767" attributes="0"/>
                                       <Component id="auctions_startAmount" alignment="0" max="32767" attributes="0"/>
                                       <Group type="102" attributes="0">
                                           <Component id="jButton2" min="-2" max="-2" attributes="0"/>
@@ -241,6 +240,7 @@
                                           <Component id="auctions_buttonAdd" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
+                                  <Component id="auctions_closeTime" alignment="0" min="-2" pref="142" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
@@ -381,8 +381,6 @@
                 <Property name="text" type="java.lang.String" value="Refresh"/>
               </Properties>
             </Component>
-            <Component class="com.toedter.calendar.JDateChooser" name="auctions_closeTime">
-            </Component>
             <Component class="javax.swing.JButton" name="jButton2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Checkout"/>
@@ -390,6 +388,8 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="com.toedter.calendar.JDateChooser" name="auctions_closeTime">
             </Component>
           </SubComponents>
         </Container>
