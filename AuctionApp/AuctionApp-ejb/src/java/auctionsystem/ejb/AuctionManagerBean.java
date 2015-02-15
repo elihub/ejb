@@ -6,12 +6,15 @@
 
 package auctionsystem.ejb;
 
+import auctionsystem.entity.CreditCard;
 import auctionsystem.entity.Item;
+import auctionsystem.entity.User;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -26,7 +29,7 @@ import javax.ejb.Stateless;
  *
  * @author Cursos Montoya
  */
-//@Stateful
+@Stateful
 public class AuctionManagerBean implements AuctionManagerBeanRemote {
     
     @EJB
@@ -34,6 +37,7 @@ public class AuctionManagerBean implements AuctionManagerBeanRemote {
     @EJB
     private TimeBasedAuctionManagerBean timeBasedAuctionManagerBean2;
     private List<Item> items = new LinkedList<Item>();
+    private List<User> users;
     
     @Override
     public String communicationTest(String message) {
@@ -60,17 +64,25 @@ public class AuctionManagerBean implements AuctionManagerBeanRemote {
     public List<Item> getItems() {
         return items;
     }
+    
+    @PostConstruct
+    public void initialize(){
+          users=new LinkedList<>();
+          users.add(new User("Jennifer", "Whalen", "3 South Washington St. Binghamton, N.Y 13903", new CreditCard("1234-5678-9012-3456".toCharArray(), (short) 11, (short) 25, "503".toCharArray(), "Jennifer Whalen"), "JWHALEN", "Jennifer", "Jennifer123"));
+          users.add(new User("Karen", "Colmenares", "1100 Van Ness Avenue Fresno, CA 93724-0002", new CreditCard("0987-6543-2198".toCharArray(), (short) 9, (short) 18, "605".toCharArray(), "Karen Colmenares"), "KCOLMENA", "Karen", "Karen123"));
+    }
     //call backs de los metodos en la vida de ejecucion de un EJB
     
     @PrePassivate
     private void passive(){
         System.out.println("AuctionManagerBean.passive():@PrePassivate");
         
-    }
-    
+    }    
+  
     @PostActivate
     private void activate(){
         System.out.println("AuctionManagerBean.activate():@PostActivate");
+        users=new LinkedList<>();
     }
     
     @Remove
@@ -98,6 +110,8 @@ public class AuctionManagerBean implements AuctionManagerBeanRemote {
         String orderId="102";
         return new AsyncResult<>(orderId);
     }
+
+   
     
     
     

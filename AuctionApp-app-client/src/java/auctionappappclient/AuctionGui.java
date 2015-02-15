@@ -9,6 +9,7 @@ import auctionsystem.ejb.AuctionManagerBeanRemote;
 import auctionsystem.ejb.StartAuctionBeanRemote;
 import auctionsystem.entity.Auction;
 import auctionsystem.entity.Item;
+import auctionsystem.entity.User;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -25,17 +26,27 @@ import javax.swing.table.DefaultTableModel;
  */
 public class AuctionGui extends javax.swing.JFrame {
 
-    @EJB
-    private static StartAuctionBeanRemote startAuctionBean;
-
-    @EJB
+    
+    private static StartAuctionBeanRemote startAuctionBean;   
     private static AuctionManagerBeanRemote auctionManagerBean;
+    private User user;
 
     /**
      * Creates new form AuctionGui
      */
     public AuctionGui() {
         initComponents();
+        refreshItems();
+        refreshAuctions();
+    }
+
+    AuctionGui(AuctionManagerBeanRemote auctionManagerBean, StartAuctionBeanRemote startAuctionBean, User user) {
+       this.auctionManagerBean=auctionManagerBean;
+       this.startAuctionBean=startAuctionBean;
+       this.user=user;
+        initComponents();
+        refreshItems();
+        refreshAuctions();
     }
 
     /**
@@ -47,7 +58,8 @@ public class AuctionGui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
+        Beats = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -70,12 +82,31 @@ public class AuctionGui extends javax.swing.JFrame {
         auctions_buttonRefresh = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         auctions_closeTime = new com.toedter.calendar.JDateChooser();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        bids_auction = new javax.swing.JComboBox();
+        jLabel7 = new javax.swing.JLabel();
+        bids_amount = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        bids_table = new javax.swing.JTable();
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+        Beats.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jTabbedPane1StateChanged(evt);
+                BeatsStateChanged(evt);
             }
         });
 
@@ -174,7 +205,7 @@ public class AuctionGui extends javax.swing.JFrame {
                 .addGap(12, 12, 12))
         );
 
-        jTabbedPane1.addTab("Items", jPanel1);
+        Beats.addTab("Items", jPanel1);
 
         jLabel3.setText("Item:");
 
@@ -230,7 +261,7 @@ public class AuctionGui extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 10, Short.MAX_VALUE)
+                        .addGap(0, 156, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(auctions_buttonRefresh, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -279,17 +310,95 @@ public class AuctionGui extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Auctions", jPanel2);
+        Beats.addTab("Auctions", jPanel2);
+
+        jLabel6.setText("Auction");
+
+        jLabel7.setText("Amount");
+
+        bids_amount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bids_amountActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Publish");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        bids_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Auction", "Start Amount", "Current Increment", "Bid Time", "Bidder"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(bids_table);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jButton3)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel7)
+                                .addComponent(jLabel6))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(bids_auction, 0, 220, Short.MAX_VALUE)
+                                .addComponent(bids_amount))))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 508, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(bids_auction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(bids_amount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(67, Short.MAX_VALUE))
+        );
+
+        Beats.addTab("Bids", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(Beats)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(Beats)
         );
 
         pack();
@@ -329,8 +438,8 @@ public class AuctionGui extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_auctions_startAmountActionPerformed
 
-    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
-        switch (jTabbedPane1.getSelectedIndex()) {
+    private void BeatsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_BeatsStateChanged
+        switch (Beats.getSelectedIndex()) {
             case 0:
                 break;
             case 1:
@@ -342,10 +451,10 @@ public class AuctionGui extends javax.swing.JFrame {
                 }
                 break;
         }
-    }//GEN-LAST:event_jTabbedPane1StateChanged
+    }//GEN-LAST:event_BeatsStateChanged
 
     private void auctions_buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_auctions_buttonAddActionPerformed
-        startAuctionBean.addAuction(Double.parseDouble(auctions_startAmount.getText()), auctions_closeTime.getDate(), (Item) auctions_item.getSelectedItem(), null);
+        startAuctionBean.addAuction(Double.parseDouble(auctions_startAmount.getText()), auctions_closeTime.getDate(), (Item) auctions_item.getSelectedItem(), user);
         refreshAuctions();
     }//GEN-LAST:event_auctions_buttonAddActionPerformed
 
@@ -382,6 +491,14 @@ public class AuctionGui extends javax.swing.JFrame {
         }).start();
        
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void bids_amountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bids_amountActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bids_amountActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+       
+    }//GEN-LAST:event_jButton3ActionPerformed
     private void refreshAuctions() {
         List<Auction> auctions=startAuctionBean.getAuctions();
         DefaultTableModel model = (DefaultTableModel) auctions_table.getModel();
@@ -443,12 +560,16 @@ public class AuctionGui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane Beats;
     private javax.swing.JButton auctions_buttonAdd;
     private javax.swing.JButton auctions_buttonRefresh;
     private com.toedter.calendar.JDateChooser auctions_closeTime;
     private javax.swing.JComboBox auctions_item;
     private javax.swing.JTextField auctions_startAmount;
     private javax.swing.JTable auctions_table;
+    private javax.swing.JTextField bids_amount;
+    private javax.swing.JComboBox bids_auction;
+    private javax.swing.JTable bids_table;
     private javax.swing.JButton items_buttonAdd;
     private javax.swing.JButton items_buttonRefresh;
     private javax.swing.JTextField items_description;
@@ -456,15 +577,20 @@ public class AuctionGui extends javax.swing.JFrame {
     private javax.swing.JTable items_table;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     // End of variables declaration//GEN-END:variables
 }

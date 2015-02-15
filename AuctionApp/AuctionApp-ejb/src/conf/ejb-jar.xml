@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_2.xsd">
     <!--Sirve para declarar un bean-->
-    <enterprise-beans>
+   <!-- <enterprise-beans>
         <session>
             <ejb-name>AuctionManagerBean</ejb-name>
             <business-remote>auctionsystem.ejb.AuctionManagerBeanRemote</business-remote>
@@ -12,6 +12,6 @@
             <session-type>Stateful</session-type>
         </session>  
         
-    </enterprise-beans>
+    </enterprise-beans>-->
 
 </ejb-jar>

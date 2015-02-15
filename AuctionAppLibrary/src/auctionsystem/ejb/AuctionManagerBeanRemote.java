@@ -29,5 +29,7 @@ public interface AuctionManagerBeanRemote {
     void remove();
 
     Future<String> checkout();
+
+    
     
 }
